@@ -31,34 +31,19 @@ class LogoFragmentation {
     }
     
     createCanvas() {
-        // Get hero section dimensions
-        const heroSection = document.getElementById('hero');
-        const heroWidth = heroSection ? heroSection.offsetWidth : window.innerWidth;
-        const heroHeight = heroSection ? heroSection.offsetHeight : window.innerHeight;
-        
         this.canvas = document.createElement('canvas');
-        this.canvas.width = heroWidth;
-        this.canvas.height = heroHeight;
-        this.canvas.style.position = 'absolute';
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
+        this.canvas.style.position = 'fixed';
         this.canvas.style.top = '0';
         this.canvas.style.left = '0';
-        this.canvas.style.width = '100%';
-        this.canvas.style.height = '100%';
         this.canvas.style.pointerEvents = 'none';
         this.canvas.style.zIndex = '1';
         
         this.ctx = this.canvas.getContext('2d');
+        this.container.appendChild(this.canvas);
         
-        // Add canvas directly to hero section instead of container
-        if (heroSection) {
-            heroSection.appendChild(this.canvas);
-            // Make sure hero section has relative positioning
-            heroSection.style.position = 'relative';
-        } else {
-            this.container.appendChild(this.canvas);
-        }
-        
-        console.log('✅ Canvas created inside hero section:', this.canvas.width, 'x', this.canvas.height);
+        console.log('✅ Canvas created:', this.canvas.width, 'x', this.canvas.height);
     }
     
     loadImage() {
@@ -80,9 +65,9 @@ class LogoFragmentation {
     }
     
     processImage(img) {
-        // Calculate size and position for logo (moved to the right)
+        // Calculate size and position for logo
         const logoSize = Math.min(this.canvas.width, this.canvas.height) * 0.3;
-        const logoX = (this.canvas.width - logoSize) / 2 + 250; // Move 250px to the right
+        const logoX = (this.canvas.width - logoSize) / 2;
         const logoY = (this.canvas.height - logoSize) / 2;
         
         // Calculate actual scaled dimensions maintaining aspect ratio
@@ -174,12 +159,8 @@ class LogoFragmentation {
         
         // Resize handler
         window.addEventListener('resize', () => {
-            const heroSection = document.getElementById('hero');
-            const heroWidth = heroSection ? heroSection.offsetWidth : window.innerWidth;
-            const heroHeight = heroSection ? heroSection.offsetHeight : window.innerHeight;
-            
-            this.canvas.width = heroWidth;
-            this.canvas.height = heroHeight;
+            this.canvas.width = window.innerWidth;
+            this.canvas.height = window.innerHeight;
         });
     }
     
