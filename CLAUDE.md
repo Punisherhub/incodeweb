@@ -4,95 +4,172 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is the Incode Academy landing page - a modern, interactive website for a programming education platform. The site features advanced 3D graphics, interactive animations, and a sophisticated visual design focused on showcasing Python programming education for high school and technical students.
+Incode Academy Website - A modern, futuristic website with a preloader entry page and interactive Python course showcase. Built with vanilla HTML, CSS, and JavaScript, featuring advanced 3D animations powered by Three.js and GSAP with ScrollTrigger.
 
-## Architecture & Technologies
+## Commands
 
-### Core Stack
-- **Frontend**: Vanilla HTML5, CSS3, JavaScript ES6+
-- **3D Graphics**: Three.js for interactive logos and particle systems
-- **Animation**: GSAP for smooth transitions and scroll-triggered animations
-- **Styling**: CSS custom properties with dark theme and neon color palette
+Since this is a vanilla HTML/CSS/JS project without a build system, there are no specific build commands. The project can be served using:
 
-### Key Components
+### Development
+- Open `index.html` directly in a browser for development
+- Use a local server like `python -m http.server 8000` or `live-server` for better development experience with CORS support for Three.js
+- For quick testing: `python -m http.server 8000` then visit `http://localhost:8000`
+- No build process required - all files are served directly
 
-1. **Advanced Interactive Logo System** (`advanced-logo.js`)
-   - 3D fragmenting logo inspired by Soul.io design
-   - Mouse-controlled particle disintegration and reassembly
-   - 500+ ambient particles with physics simulation
-   - Lighting system with dynamic color changes
+### Testing
+- Manual testing by opening the website in multiple browsers (Chrome, Firefox, Safari, Edge)
+- Test responsive design using browser dev tools device emulation
+- Verify 3D animations and interactions work properly
+- Check console for any JavaScript errors
 
-2. **Main Website Controller** (`script.js`)
-   - Central `IncodeWebsite` class managing all 3D scenes
-   - Background particle system with 2000+ particles
-   - Section-specific 3D containers for different page areas
-   - Advanced mouse interactions and scroll animations
+## Architecture
 
-3. **Visual Design System** (`style.css`)
-   - Custom cursor system with hover states
-   - CSS custom properties for brand colors (Purple #6366f1, Violet #8b5cf6, Cyan #00d4ff)
-   - Advanced loading screen with animated progress
-   - Responsive design with mobile navigation
+### Project Structure
+```
+incode/
+├── index.html              # Main HTML file with preloader and main website structure
+├── style.css               # Complete stylesheet with futuristic design system
+├── script.js               # Main JavaScript application with class-based architecture
+└── assets/
+    └── LogoInCode.png      # Logo image asset (444KB PNG)
+```
 
-### Site Structure
-- **Hero**: Interactive 3D logo with fragmentation effects
-- **About**: Brand mission and values with 3D visuals
-- **Course**: Python curriculum details with interactive elements
-- **Differentials**: Feature grid highlighting academy benefits
-- **Journey**: Timeline showcasing learning progression
-- **Contact**: Form with interactive styling and 3D background
+### File Dependencies and Loading Order
+1. **HTML Structure**: `index.html` contains all markup for both preloader and main website
+2. **External CDN Dependencies** (loaded in head):
+   - Three.js r128 for 3D graphics
+   - GSAP 3.12.2 for animations
+   - ScrollTrigger plugin for scroll-based animations
+   - Google Fonts: Inter, JetBrains Mono, Orbitron
+3. **Local Files** (loaded in order):
+   - `style.css` - Complete stylesheet with CSS custom properties
+   - `script.js` - Main application logic in single IncodeWebsite class
 
-## Development Commands
+### Key Technologies
+- **Vanilla HTML5** - Semantic structure with preloader and main website sections
+- **CSS3** - Custom properties, animations, 3D transforms, advanced gradients
+- **Vanilla JavaScript (ES6+)** - Classes, modules, event handling
+- **Three.js r128** - 3D graphics, particle systems, and background animations
+- **GSAP 3.12.2** - Advanced animations, timelines, and transitions
+- **ScrollTrigger** - Scroll-based animations and timeline progression
+- **Google Fonts** - Inter, JetBrains Mono, and Orbitron font families
 
-### Local Development
-- **Serve locally**: Use XAMPP or any local server pointing to the project root
-- **Access**: Navigate to `http://localhost/incode` (if using XAMPP in htdocs)
+### Design System
+- **Colors**: Dark futuristic theme with primary (#6366f1), secondary (#8b5cf6), cyan (#06b6d4), and pink (#ec4899)
+- **Typography**: Inter for body text, JetBrains Mono for code elements, Orbitron for display text
+- **Animations**: Complex 3D effects, card flips, scroll-triggered progressions, particle systems
+- **Responsive**: Mobile-first approach with sophisticated breakpoints
 
-### Browser Testing
-- **Chrome DevTools**: Essential for Three.js debugging and performance monitoring
-- **Responsive Testing**: Site is optimized for desktop, tablet, and mobile viewports
+### Website Structure
 
-## Key Technical Details
+#### 1. Preloader (Entry Page)
+- Interactive logo with click-to-enter functionality
+- Animated background grid pattern
+- Particle effects around logo on hover
+- Futuristic transition animation to main website
 
-### 3D Scene Management
-- Each major section has its own Three.js scene managed by the main controller
-- Scenes are initialized lazily to improve performance
-- Particle systems use BufferGeometry for optimal rendering
+#### 2. Main Website Sections
+- **Hero Section**: "Domine Python com a Incode Academy" title with 3 pillars (Crie, Inove, Programe)
+- **Course Card**: Interactive flip card for "Programação em Python" with front/back sides
+- **Career Progression**: Scroll-triggered timeline showing student journey from course entry to job market
+- **Footer**: Contact information including Instagram link
 
-### Animation Architecture
-- GSAP ScrollTrigger for section-based animations
-- Three.js animation loop for continuous 3D rendering
-- Custom easing functions for premium feel interactions
+### Component Architecture
+
+The website uses a single main class `IncodeWebsite` in `script.js:2-530` that manages all functionality:
+
+#### Core Systems (JavaScript Methods)
+- **Preloader Management** (`initPreloader:40-61`): Logo interactions, particle generation, transition animations
+- **3D Background Scene** (`initBackgroundScene:197-224`): Three.js particle systems with 80 floating particles
+- **Course Card System** (`initCourseCard:261-298`): Interactive flip functionality with 3D CSS transforms
+- **Progression Animation** (`initProgressionAnimation:388-421`): ScrollTrigger-based timeline with dynamic path animation
+- **Scroll Effects** (`onScroll:491-512`): Parallax movement, element visibility, and progress tracking
+
+#### Key Implementation Details
+- **Initialization Flow**: DOM ready → initializeComponents → preloader → main website transition
+- **Animation Performance**: Uses `requestAnimationFrame` for 3D particle animation loop
+- **Memory Management**: Proper cleanup methods (`destroy:518-529`) to prevent memory leaks
+- **Error Handling**: Try-catch blocks around Three.js operations with fallback warnings
+
+#### Animation Patterns
+- **Entry Animations**: Staggered element appearances after preloader transition
+- **Hover Effects**: 3D transforms, scaling, and color transitions on interactive elements
+- **Scroll Triggers**: Progressive timeline reveal and step-by-step career progression
+- **Background Effects**: Continuous particle movement and floating element rotation
+- **Card Interactions**: Smooth flip animations with visual feedback
+
+### Key Features
+
+#### Interactive Preloader
+- Click-to-enter logo with hover effects
+- Animated particle generation around logo
+- Smooth transition with GSAP timeline
+- Background grid animation
+
+#### 3 Pillars Showcase
+- "CRIE", "INOVE", "PROGRAME" with animated cards
+- Hover effects with glow and transform animations
+- Responsive grid layout
+
+#### Course Card System
+- Interactive flip card showing Python course
+- Front: Course title and "Hard Skills & Soft Skills"
+- Back: Placeholder for future content (duration, modules, certification)
+- Smooth 3D CSS transform animations
+
+#### Career Progression Timeline
+- 5-step journey: Course Entry → Knowledge → Projects → Graduation → Job Market
+- Scroll-triggered animations with staggered reveals
+- Dynamic timeline path that grows with scroll progress
+- Alternating left/right layout on desktop
 
 ### Performance Considerations
-- Particle count varies by device capability
-- Renderer pixel ratio adjusts to device specs
-- Animation frame throttling for smooth 60fps performance
+- Optimized Three.js rendering with efficient particle systems
+- GSAP animations use hardware acceleration
+- ScrollTrigger optimized for smooth performance
+- Responsive design ensures good mobile performance
+- Proper cleanup methods to prevent memory leaks
 
-### Color System
-Brand colors derived from the Incode logo:
-- Primary: `#6366f1` (Purple)
-- Secondary: `#8b5cf6` (Violet) 
-- Accent: `#f59e0b` (Amber)
-- Background: `#0f0f23` (Dark)
+### Development Notes
+- All animations are controlled through the main `IncodeWebsite` class
+- ScrollTrigger plugin registration handled automatically (`initScrollTrigger:384-386`)
+- Event listeners properly managed with cleanup methods in `destroy()` method
+- Mobile-responsive timeline switches to single-column layout via CSS media queries
+- Debug access available through `window.incodeWebsite` (set at `script.js:540`)
+- Console logging throughout for debugging: uses emoji prefixes (🚀, ✅, ❌, ⚠️)
 
-### Interactive Features
-- Logo fragmentation controlled by mouse proximity
-- Custom cursor with state changes
-- Magnetic card effects following mouse movement
-- Dynamic lighting responding to user interaction
+### CSS Architecture
+- **CSS Custom Properties**: All colors, fonts, and gradients defined in `:root` for consistent theming
+- **Design Tokens**: Incode brand colors (`--incode-primary: #00D4AA`, `--incode-secondary: #8B5CF6`)
+- **Responsive Breakpoints**: Mobile-first approach with breakpoints at 768px and 480px
+- **Animation System**: Keyframe animations for floating, pulsing, shimmering effects
+- **Performance**: Hardware-accelerated transforms and optimized CSS animations
 
-## File Dependencies
+### Styling Conventions
+- CSS custom properties for consistent theming across all elements
+- Futuristic design with neon accents and glow effects
+- Advanced CSS animations with keyframes for complex movements
+- 3D CSS transforms for card flips and hover effects
+- Gradient backgrounds and animated placeholder elements
 
-- `advanced-logo.js` must load before main script
-- Three.js CDN required for all 3D functionality
-- GSAP CDN for animations
-- Google Fonts (Inter, JetBrains Mono) for typography
+### Content Structure
+- **Language**: Portuguese (pt-BR) language content focused on Python programming education
+- **Educational Focus**: Hard skills and soft skills emphasis for job market preparation
+- **Career Journey**: 5-step progression from course entry to job market
+- **Social Media**: Instagram integration (@incodeacademy) for course enrollment
+- **Contact Info**: Email (contato@incodeacademy.com) and phone placeholder content
 
-## Mobile Considerations
+### Browser Support and Performance
+- **Modern Browser Requirements**: Requires ES6+ support for classes, arrow functions
+- **3D Graphics**: Requires WebGL support for Three.js particle systems
+- **Fallback Handling**: Graceful degradation when 3D features fail
+- **Performance Optimizations**:
+  - Reduced particle count (80 particles) for mobile performance
+  - Hardware-accelerated CSS transforms
+  - Efficient ScrollTrigger usage with minimal reflows
 
-The site includes comprehensive mobile optimizations:
-- Reduced particle counts on mobile devices
-- Touch-friendly navigation menu
-- Responsive 3D scene scaling
-- Performance-optimized animations for mobile browsers
+### Hosting Considerations
+- **Static Hosting Ready**: Designed for static hosting (Hostinger compatible)
+- **CDN Dependencies**: All external dependencies loaded via CDN (no npm/build process)
+- **No Server Requirements**: Pure client-side application
+- **CORS Considerations**: Local server needed for development due to Three.js texture loading
