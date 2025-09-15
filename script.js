@@ -1,860 +1,559 @@
-// Enhanced 3D Website with Advanced Interactions
+// Incode Website - Versão Limpa e Otimizada
 class IncodeWebsite {
     constructor() {
         this.scenes = {};
         this.renderers = {};
         this.animationFrameId = null;
-        this.isAnimating = false;
-        this.interactiveLogo = null;
-        
+        this.isPreloaderActive = true;
+        this.particles = null;
+        this.camera = null;
+
         this.init();
     }
 
     init() {
-        this.initBackgroundScene();
-        this.initSectionScenes();
-        this.initNavigation();
-        this.initScrollAnimations();
-        this.initContactForm();
-        this.initMobileMenu();
-        this.hideLoadingScreen();
-        
+        console.log('🚀 Iniciando Incode Website');
+
+        // Aguarda DOM estar pronto
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => this.initializeComponents());
+        } else {
+            this.initializeComponents();
+        }
+    }
+
+    initializeComponents() {
+        this.initPreloader();
+        this.initScrollTrigger();
+
         // Event listeners
         window.addEventListener('resize', () => this.onWindowResize());
-        window.addEventListener('mousemove', (e) => this.onMouseMove(e));
         window.addEventListener('scroll', () => this.onScroll());
+
+        console.log('✅ Componentes inicializados');
     }
 
-    // Background particle system with advanced effects
+    // ==========================================================================
+    // PRELOADER
+    // ==========================================================================
+
+    initPreloader() {
+        const preloaderLogo = document.getElementById('preloader-logo');
+        const preloader = document.getElementById('preloader');
+        const mainWebsite = document.getElementById('main-website');
+
+        if (!preloaderLogo || !preloader || !mainWebsite) {
+            console.error('❌ Elementos do preloader não encontrados');
+            return;
+        }
+
+        console.log('✅ Preloader inicializado');
+
+        // Adiciona partículas simples
+        this.createSimpleParticles();
+
+        // Click event para transição
+        preloaderLogo.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('🎯 Clique no logo - iniciando transição');
+            this.transitionToMainSite(preloader, mainWebsite);
+        });
+    }
+
+    createSimpleParticles() {
+        const particlesContainer = document.querySelector('.logo-particles');
+        if (!particlesContainer) return;
+
+        // Limpa partículas existentes
+        particlesContainer.innerHTML = '';
+
+        // Criar 12 partículas simples
+        for (let i = 0; i < 12; i++) {
+            const particle = document.createElement('div');
+            particle.style.cssText = `
+                position: absolute;
+                width: ${3 + Math.random() * 3}px;
+                height: ${3 + Math.random() * 3}px;
+                background: #4A90E2;
+                border-radius: 50%;
+                opacity: ${0.3 + Math.random() * 0.4};
+                left: ${Math.random() * 160 - 80}px;
+                top: ${Math.random() * 160 - 80}px;
+                pointer-events: none;
+                animation: simpleFloat ${2 + Math.random() * 2}s ease-in-out infinite;
+                animation-delay: ${Math.random() * 2}s;
+            `;
+            particlesContainer.appendChild(particle);
+        }
+
+        // CSS para animação simples
+        if (!document.getElementById('simple-particles-style')) {
+            const style = document.createElement('style');
+            style.id = 'simple-particles-style';
+            style.textContent = `
+                @keyframes simpleFloat {
+                    0%, 100% { transform: translateY(0px) scale(1); opacity: 0.3; }
+                    50% { transform: translateY(-15px) scale(1.1); opacity: 0.7; }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    }
+
+    transitionToMainSite(preloader, mainWebsite) {
+        if (!this.isPreloaderActive) return;
+        this.isPreloaderActive = false;
+
+        console.log('🎬 Iniciando transição para site principal');
+
+        // Animação de transição simplificada
+        const tl = gsap.timeline();
+
+        tl.to('.logo-image', {
+            scale: 1.3,
+            rotation: 360,
+            duration: 0.8,
+            ease: 'power2.inOut'
+        })
+        .to('.logo-text-container', {
+            scale: 1.2,
+            y: -20,
+            duration: 0.6,
+            ease: 'power2.out'
+        }, '-=0.4')
+        .to('.logo-glow', {
+            scale: 3,
+            opacity: 1,
+            duration: 0.8,
+            ease: 'power2.out'
+        }, '-=0.6')
+        .to(preloader, {
+            opacity: 0,
+            scale: 0.95,
+            duration: 0.8,
+            ease: 'power2.inOut',
+            onComplete: () => {
+                preloader.style.display = 'none';
+                mainWebsite.classList.remove('hidden');
+                this.initMainWebsite();
+            }
+        }, '-=0.2');
+    }
+
+    initMainWebsite() {
+        console.log('🌟 Inicializando site principal');
+
+        // Inicializar componentes do site principal
+        setTimeout(() => {
+            this.initBackgroundScene();
+            this.initCourseCard();
+            this.initProgressionAnimation();
+            this.initPilaresAnimation();
+            this.animateEntrance();
+        }, 100);
+    }
+
+    animateEntrance() {
+        console.log('🎨 Iniciando animações de entrada');
+
+        // Primeiro garantir que tudo está visível
+        gsap.set('.hero-title', { opacity: 1, visibility: 'visible' });
+        gsap.set('.hero-title .title-line', { opacity: 1, visibility: 'visible' });
+        gsap.set('.pilares-container', { opacity: 1, visibility: 'visible' });
+        gsap.set('.pilar', { opacity: 1, visibility: 'visible' });
+        gsap.set('.course-card-wrapper', { opacity: 1, visibility: 'visible' });
+
+        const tl = gsap.timeline();
+
+        tl.from('.navbar', {
+            y: -30,
+            opacity: 0.5,
+            duration: 0.6,
+            ease: 'power2.out'
+        })
+        .from('.hero-title .title-line', {
+            y: 30,
+            opacity: 0.3,
+            duration: 0.4,
+            stagger: 0.1,
+            ease: 'power2.out'
+        }, '-=0.3')
+        .from('.pilar', {
+            y: 20,
+            opacity: 0.2,
+            scale: 0.98,
+            duration: 0.4,
+            stagger: 0.1,
+            ease: 'power2.out'
+        }, '-=0.2');
+
+        console.log('✨ Animações de entrada completadas');
+    }
+
+    // ==========================================================================
+    // BACKGROUND 3D SCENE
+    // ==========================================================================
+
     initBackgroundScene() {
         const canvas = document.getElementById('bg-canvas');
-        this.scenes.background = new THREE.Scene();
-        
-        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        this.renderers.background = new THREE.WebGLRenderer({ 
-            canvas, 
-            alpha: true, 
-            antialias: true 
-        });
-        
-        this.renderers.background.setSize(window.innerWidth, window.innerHeight);
-        this.renderers.background.setPixelRatio(window.devicePixelRatio);
-        
-        this.createAdvancedParticleSystem();
-        this.createFloatingElements();
-        
-        this.camera.position.z = 5;
-        this.animate();
+        if (!canvas) {
+            console.warn('❌ Canvas de fundo não encontrado');
+            return;
+        }
+
+        try {
+            this.scenes.background = new THREE.Scene();
+            this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            this.renderers.background = new THREE.WebGLRenderer({
+                canvas,
+                alpha: true,
+                antialias: true
+            });
+
+            this.renderers.background.setSize(window.innerWidth, window.innerHeight);
+            this.renderers.background.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            this.createSimpleParticleSystem();
+            this.camera.position.z = 5;
+            this.animate();
+
+            console.log('✅ Background 3D inicializado');
+        } catch (error) {
+            console.warn('⚠️ Erro ao inicializar 3D:', error);
+        }
     }
 
-    createAdvancedParticleSystem() {
-        // Main particle system
-        const particleCount = 2000;
-        const geometry = new THREE.BufferGeometry();
+    createSimpleParticleSystem() {
+        const particleCount = 80; // Reduzido para performance
         const positions = new Float32Array(particleCount * 3);
-        const colors = new Float32Array(particleCount * 3);
-        const sizes = new Float32Array(particleCount);
-        
-        const colorPalette = [
-            new THREE.Color(0x6366f1),
-            new THREE.Color(0x8b5cf6),
-            new THREE.Color(0xf59e0b),
-            new THREE.Color(0x3b82f6)
-        ];
-        
+        const velocities = new Float32Array(particleCount * 3);
+
         for (let i = 0; i < particleCount; i++) {
-            const i3 = i * 3;
-            
-            // Positions
-            positions[i3] = (Math.random() - 0.5) * 50;
-            positions[i3 + 1] = (Math.random() - 0.5) * 50;
-            positions[i3 + 2] = (Math.random() - 0.5) * 50;
-            
-            // Colors
-            const color = colorPalette[Math.floor(Math.random() * colorPalette.length)];
-            colors[i3] = color.r;
-            colors[i3 + 1] = color.g;
-            colors[i3 + 2] = color.b;
-            
-            // Sizes
-            sizes[i] = Math.random() * 0.03 + 0.01;
+            positions[i * 3] = (Math.random() - 0.5) * 15;
+            positions[i * 3 + 1] = (Math.random() - 0.5) * 15;
+            positions[i * 3 + 2] = (Math.random() - 0.5) * 15;
+
+            velocities[i * 3] = (Math.random() - 0.5) * 0.01;
+            velocities[i * 3 + 1] = (Math.random() - 0.5) * 0.01;
+            velocities[i * 3 + 2] = (Math.random() - 0.5) * 0.01;
         }
-        
+
+        const geometry = new THREE.BufferGeometry();
         geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-        geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
-        
+
         const material = new THREE.PointsMaterial({
-            size: 0.02,
-            vertexColors: true,
+            color: 0x4A90E2,
+            size: 0.03,
             transparent: true,
             opacity: 0.6,
             blending: THREE.AdditiveBlending
         });
-        
+
         this.particles = new THREE.Points(geometry, material);
+        this.particles.userData = { velocities };
         this.scenes.background.add(this.particles);
-        
-        // Add particle connections
-        this.createParticleConnections(positions, particleCount);
     }
 
-    createParticleConnections(positions, particleCount) {
-        const connections = new THREE.BufferGeometry();
-        const connectionPositions = [];
-        const connectionColors = [];
-        
-        for (let i = 0; i < particleCount; i += 10) {
-            const i3 = i * 3;
-            const nextIndex = ((i + 10) % particleCount) * 3;
-            
-            if (Math.random() > 0.7) {
-                connectionPositions.push(
-                    positions[i3], positions[i3 + 1], positions[i3 + 2],
-                    positions[nextIndex], positions[nextIndex + 1], positions[nextIndex + 2]
-                );
-                
-                connectionColors.push(0.4, 0.4, 0.9, 0.4, 0.4, 0.9);
-            }
+    // ==========================================================================
+    // COURSE CARD
+    // ==========================================================================
+
+    initCourseCard() {
+        const courseCard = document.getElementById('course-card');
+        if (!courseCard) {
+            console.warn('❌ Course card não encontrado');
+            return;
         }
-        
-        connections.setAttribute('position', new THREE.Float32BufferAttribute(connectionPositions, 3));
-        connections.setAttribute('color', new THREE.Float32BufferAttribute(connectionColors, 3));
-        
-        const connectionMaterial = new THREE.LineBasicMaterial({
-            vertexColors: true,
-            transparent: true,
-            opacity: 0.2,
-            blending: THREE.AdditiveBlending
-        });
-        
-        const connectionLines = new THREE.LineSegments(connections, connectionMaterial);
-        this.scenes.background.add(connectionLines);
-    }
 
-    createFloatingElements() {
-        // Add floating geometric shapes
-        const shapes = [
-            new THREE.BoxGeometry(0.2, 0.2, 0.2),
-            new THREE.SphereGeometry(0.15, 12, 8),
-            new THREE.OctahedronGeometry(0.15),
-        ];
-        
-        const materials = [
-            new THREE.MeshBasicMaterial({ color: 0x6366f1, transparent: true, opacity: 0.3, wireframe: true }),
-            new THREE.MeshBasicMaterial({ color: 0x8b5cf6, transparent: true, opacity: 0.3, wireframe: true }),
-            new THREE.MeshBasicMaterial({ color: 0xf59e0b, transparent: true, opacity: 0.3, wireframe: true })
-        ];
-        
-        this.floatingElements = [];
-        
-        for (let i = 0; i < 20; i++) {
-            const geometry = shapes[Math.floor(Math.random() * shapes.length)];
-            const material = materials[Math.floor(Math.random() * materials.length)];
-            const mesh = new THREE.Mesh(geometry, material);
-            
-            mesh.position.set(
-                (Math.random() - 0.5) * 20,
-                (Math.random() - 0.5) * 20,
-                (Math.random() - 0.5) * 10
-            );
-            
-            mesh.rotation.set(
-                Math.random() * Math.PI,
-                Math.random() * Math.PI,
-                Math.random() * Math.PI
-            );
-            
-            this.scenes.background.add(mesh);
-            this.floatingElements.push(mesh);
-        }
-    }
+        console.log('✅ Course card inicializado');
 
-    // Initialize all section-specific 3D scenes
-    initSectionScenes() {
-        setTimeout(() => {
-            this.initInteractiveLogo();
-            this.initAboutScene();
-            this.initCourseScene();
-            this.initTimelineScenes();
-        }, 100);
-    }
-
-    initInteractiveLogo() {
-        const container = document.getElementById('hero-3d-container');
-        if (!container && window.InteractiveLogo3D) return;
-        
-        try {
-            this.interactiveLogo = new window.InteractiveLogo3D('hero-3d-container');
-            console.log('Interactive logo initialized successfully');
-        } catch (error) {
-            console.error('Error initializing interactive logo:', error);
-            // Fallback to original hero scene
-            this.initFallbackHeroScene();
-        }
-    }
-    
-    initFallbackHeroScene() {
-        const container = document.getElementById('hero-3d-container');
-        if (!container) return;
-        
-        this.scenes.hero = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-        this.renderers.hero = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-        
-        this.renderers.hero.setSize(container.clientWidth, container.clientHeight);
-        this.renderers.hero.setPixelRatio(window.devicePixelRatio);
-        container.appendChild(this.renderers.hero.domElement);
-        
-        // Create dynamic code visualization
-        this.createCodeVisualization(this.scenes.hero);
-        
-        // Add ambient lighting
-        const ambientLight = new THREE.AmbientLight(0x6366f1, 0.6);
-        this.scenes.hero.add(ambientLight);
-        
-        const pointLight = new THREE.PointLight(0x8b5cf6, 1, 100);
-        pointLight.position.set(5, 5, 5);
-        this.scenes.hero.add(pointLight);
-        
-        camera.position.z = 6;
-        
-        // Animation loop for fallback hero scene
-        const animateHero = () => {
-            requestAnimationFrame(animateHero);
-            
-            this.scenes.hero.children.forEach((child, index) => {
-                if (child.geometry && child.geometry.type === 'BoxGeometry') {
-                    child.rotation.x += 0.005 + index * 0.001;
-                    child.rotation.y += 0.005 + index * 0.001;
-                    child.position.y += Math.sin(Date.now() * 0.001 + index) * 0.0005;
-                }
-            });
-            
-            this.renderers.hero.render(this.scenes.hero, camera);
-        };
-        
-        animateHero();
-    }
-
-    createCodeVisualization(scene) {
-        // Create floating code blocks representing different programming concepts
-        const codeElements = [
-            { color: 0x6366f1, size: [0.6, 0.4, 0.2] },
-            { color: 0x8b5cf6, size: [0.4, 0.6, 0.3] },
-            { color: 0xf59e0b, size: [0.5, 0.3, 0.4] },
-            { color: 0x3b82f6, size: [0.3, 0.5, 0.2] }
-        ];
-        
-        codeElements.forEach((element, index) => {
-            const geometry = new THREE.BoxGeometry(...element.size);
-            const material = new THREE.MeshLambertMaterial({ 
-                color: element.color, 
-                transparent: true, 
-                opacity: 0.7 
-            });
-            const mesh = new THREE.Mesh(geometry, material);
-            
-            const angle = (index / codeElements.length) * Math.PI * 2;
-            mesh.position.set(
-                Math.cos(angle) * 3,
-                Math.sin(angle) * 2 + Math.random() * 2,
-                Math.random() * 4 - 2
-            );
-            
-            scene.add(mesh);
-        });
-    }
-
-    initAboutScene() {
-        const container = document.getElementById('about-3d-container');
-        if (!container) return;
-        
-        this.scenes.about = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-        this.renderers.about = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-        
-        this.renderers.about.setSize(container.clientWidth, container.clientHeight);
-        this.renderers.about.setPixelRatio(window.devicePixelRatio);
-        container.appendChild(this.renderers.about.domElement);
-        
-        // Create network visualization
-        this.createNetworkVisualization(this.scenes.about);
-        
-        camera.position.z = 8;
-        
-        const animateAbout = () => {
-            requestAnimationFrame(animateAbout);
-            
-            this.scenes.about.rotation.y += 0.002;
-            
-            this.renderers.about.render(this.scenes.about, camera);
-        };
-        
-        animateAbout();
-    }
-
-    createNetworkVisualization(scene) {
-        // Create interconnected network representing connections
-        const nodes = [];
-        const nodeGeometry = new THREE.SphereGeometry(0.15, 12, 8);
-        
-        // Create nodes
-        for (let i = 0; i < 12; i++) {
-            const nodeMaterial = new THREE.MeshBasicMaterial({ 
-                color: i % 2 ? 0x6366f1 : 0x8b5cf6,
-                transparent: true,
-                opacity: 0.8
-            });
-            const node = new THREE.Mesh(nodeGeometry, nodeMaterial);
-            
-            const phi = Math.acos(-1 + (2 * i) / 12);
-            const theta = Math.sqrt(12 * Math.PI) * phi;
-            
-            node.position.setFromSphericalCoords(3, phi, theta);
-            scene.add(node);
-            nodes.push(node);
-        }
-        
-        // Create connections
-        nodes.forEach((node, i) => {
-            const connections = Math.floor(Math.random() * 3) + 1;
-            for (let j = 0; j < connections; j++) {
-                const targetIndex = Math.floor(Math.random() * nodes.length);
-                if (targetIndex !== i) {
-                    const points = [node.position, nodes[targetIndex].position];
-                    const geometry = new THREE.BufferGeometry().setFromPoints(points);
-                    const material = new THREE.LineBasicMaterial({ 
-                        color: 0x8b5cf6, 
-                        transparent: true, 
-                        opacity: 0.4 
-                    });
-                    const line = new THREE.Line(geometry, material);
-                    scene.add(line);
-                }
-            }
-        });
-        
-        // Add center hub
-        const hubMaterial = new THREE.MeshBasicMaterial({ color: 0xf59e0b });
-        const hub = new THREE.Mesh(new THREE.SphereGeometry(0.3, 16, 12), hubMaterial);
-        scene.add(hub);
-    }
-
-    initCourseScene() {
-        const container = document.getElementById('course-3d-container');
-        if (!container) return;
-        
-        this.scenes.course = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-        this.renderers.course = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-        
-        this.renderers.course.setSize(container.clientWidth, container.clientHeight);
-        this.renderers.course.setPixelRatio(window.devicePixelRatio);
-        container.appendChild(this.renderers.course.domElement);
-        
-        // Create Python ecosystem visualization
-        this.createPythonEcosystem(this.scenes.course);
-        
-        camera.position.z = 8;
-        
-        const animateCourse = () => {
-            requestAnimationFrame(animateCourse);
-            
-            // Animate orbital elements
-            this.scenes.course.children.forEach((child, index) => {
-                if (child.userData && child.userData.orbital) {
-                    child.userData.angle += child.userData.speed;
-                    child.position.x = Math.cos(child.userData.angle) * child.userData.radius;
-                    child.position.z = Math.sin(child.userData.angle) * child.userData.radius;
-                    child.rotation.y += 0.01;
-                }
-            });
-            
-            this.renderers.course.render(this.scenes.course, camera);
-        };
-        
-        animateCourse();
-    }
-
-    createPythonEcosystem(scene) {
-        // Central Python symbol
-        const centerGeometry = new THREE.TorusGeometry(1, 0.3, 16, 100);
-        const centerMaterial = new THREE.MeshBasicMaterial({ 
-            color: 0x6366f1, 
-            wireframe: true 
-        });
-        const center = new THREE.Mesh(centerGeometry, centerMaterial);
-        scene.add(center);
-        
-        // Orbiting application areas
-        const applications = [
-            { name: 'AI/ML', color: 0xf59e0b, radius: 3, speed: 0.02 },
-            { name: 'Web Dev', color: 0x8b5cf6, radius: 3.5, speed: 0.015 },
-            { name: 'Data Science', color: 0x3b82f6, radius: 4, speed: 0.01 },
-            { name: 'Automation', color: 0xef4444, radius: 2.5, speed: 0.025 }
-        ];
-        
-        applications.forEach((app, index) => {
-            const geometry = new THREE.SphereGeometry(0.3, 12, 8);
-            const material = new THREE.MeshBasicMaterial({ color: app.color });
-            const sphere = new THREE.Mesh(geometry, material);
-            
-            sphere.userData = {
-                orbital: true,
-                angle: index * (Math.PI * 2 / applications.length),
-                radius: app.radius,
-                speed: app.speed
-            };
-            
-            scene.add(sphere);
-        });
-    }
-
-    initTimelineScenes() {
-        // Initialize 3D scenes for timeline items
-        const timelineContainers = ['timeline-1-3d', 'timeline-2-3d', 'timeline-3-3d', 'timeline-4-3d'];
-        
-        timelineContainers.forEach((containerId, index) => {
-            const container = document.getElementById(containerId);
-            if (!container) return;
-            
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-            
-            renderer.setSize(container.clientWidth, container.clientHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
-            container.appendChild(renderer.domElement);
-            
-            this.scenes[`timeline-${index + 1}`] = scene;
-            this.renderers[`timeline-${index + 1}`] = renderer;
-            
-            // Create specific visualization for each timeline step
-            this.createTimelineVisualization(scene, index);
-            
-            camera.position.z = 3;
-            
-            const animate = () => {
-                requestAnimationFrame(animate);
-                
-                scene.children.forEach(child => {
-                    if (child.rotation) {
-                        child.rotation.y += 0.01;
-                    }
-                });
-                
-                renderer.render(scene, camera);
-            };
-            
-            animate();
-        });
-    }
-
-    createTimelineVisualization(scene, step) {
-        const colors = [0x6366f1, 0x8b5cf6, 0xf59e0b, 0x3b82f6];
-        const geometries = [
-            new THREE.BoxGeometry(0.5, 0.5, 0.5),
-            new THREE.SphereGeometry(0.3, 12, 8),
-            new THREE.OctahedronGeometry(0.3),
-            new THREE.TorusGeometry(0.3, 0.1, 8, 16)
-        ];
-        
-        const geometry = geometries[step];
-        const material = new THREE.MeshBasicMaterial({ 
-            color: colors[step], 
-            transparent: true, 
-            opacity: 0.8,
-            wireframe: step === 3
-        });
-        const mesh = new THREE.Mesh(geometry, material);
-        
-        scene.add(mesh);
-        
-        // Add particle effects
-        const particleGeometry = new THREE.BufferGeometry();
-        const particleCount = 50;
-        const positions = new Float32Array(particleCount * 3);
-        
-        for (let i = 0; i < particleCount; i++) {
-            const i3 = i * 3;
-            positions[i3] = (Math.random() - 0.5) * 3;
-            positions[i3 + 1] = (Math.random() - 0.5) * 3;
-            positions[i3 + 2] = (Math.random() - 0.5) * 3;
-        }
-        
-        particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        
-        const particleMaterial = new THREE.PointsMaterial({
-            color: colors[step],
-            size: 0.02,
-            transparent: true,
-            opacity: 0.6
-        });
-        
-        const particles = new THREE.Points(particleGeometry, particleMaterial);
-        scene.add(particles);
-    }
-
-
-    // Navigation and scroll handling
-    initNavigation() {
-        const navLinks = document.querySelectorAll('.nav-link');
-        const progressFill = document.querySelector('.nav-progress-fill');
-        
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const targetId = link.getAttribute('href').substring(1);
-                const targetElement = document.getElementById(targetId);
-                
-                if (targetElement) {
-                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    this.updateActiveNavLink(link);
-                }
-            });
-        });
-        
-        this.updateNavigationProgress();
-    }
-
-    updateActiveNavLink(activeLink) {
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.classList.remove('active');
-        });
-        activeLink.classList.add('active');
-    }
-
-    updateNavigationProgress() {
-        const sections = document.querySelectorAll('section');
-        const navLinks = document.querySelectorAll('.nav-link');
-        const progressFill = document.querySelector('.nav-progress-fill');
-        
-        const sectionOffsets = Array.from(sections).map(section => ({
-            id: section.id,
-            offsetTop: section.offsetTop,
-            offsetHeight: section.offsetHeight
-        }));
-        
-        window.addEventListener('scroll', () => {
-            const scrollTop = window.pageYOffset;
-            const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
-            const scrollPercent = (scrollTop / documentHeight) * 100;
-            
-            if (progressFill) {
-                progressFill.style.width = `${scrollPercent}%`;
-            }
-            
-            // Update active navigation link
-            let activeSection = '';
-            sectionOffsets.forEach(section => {
-                if (scrollTop >= section.offsetTop - 100) {
-                    activeSection = section.id;
-                }
-            });
-            
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('data-section') === activeSection) {
-                    link.classList.add('active');
-                }
-            });
-        });
-    }
-
-    initScrollAnimations() {
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-        
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animate-in');
-                    
-                    // Trigger specific animations
-                    if (entry.target.classList.contains('timeline-item')) {
-                        entry.target.style.animationDelay = `${Array.from(entry.target.parentNode.children).indexOf(entry.target) * 0.2}s`;
-                    }
-                }
-            });
-        }, observerOptions);
-        
-        // Observe elements for animation
-        const elementsToAnimate = document.querySelectorAll('.timeline-item, .differential-card');
-        elementsToAnimate.forEach(element => {
-            observer.observe(element);
-        });
-    }
-
-
-    // Contact form handling
-    initContactForm() {
-        const form = document.querySelector('.form');
-        if (!form) return;
-        
-        form.addEventListener('submit', (e) => {
+        // Click event para flip
+        courseCard.addEventListener('click', (e) => {
             e.preventDefault();
-            
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData);
-            
-            // Simulate form submission
-            const submitButton = form.querySelector('button[type=\"submit\"]');
-            const originalText = submitButton.querySelector('span').textContent;
-            
-            submitButton.querySelector('span').textContent = 'Enviando...';
-            submitButton.disabled = true;
-            
-            setTimeout(() => {
-                submitButton.querySelector('span').textContent = 'Mensagem Enviada!';
-                setTimeout(() => {
-                    submitButton.querySelector('span').textContent = originalText;
-                    submitButton.disabled = false;
-                    form.reset();
-                }, 2000);
-            }, 1500);
+            this.flipCard(courseCard);
         });
-        
-        // Enhanced form interactions
-        const inputs = form.querySelectorAll('input, select');
-        inputs.forEach(input => {
-            input.addEventListener('focus', () => {
-                input.parentElement.classList.add('focused');
-            });
-            
-            input.addEventListener('blur', () => {
-                if (!input.value) {
-                    input.parentElement.classList.remove('focused');
-                }
-            });
+
+        // Hover effects simples
+        courseCard.addEventListener('mouseenter', () => {
+            if (!courseCard.classList.contains('flipping')) {
+                gsap.to(courseCard, {
+                    y: -10,
+                    scale: 1.02,
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+            }
+        });
+
+        courseCard.addEventListener('mouseleave', () => {
+            if (!courseCard.classList.contains('flipping')) {
+                gsap.to(courseCard, {
+                    y: 0,
+                    scale: 1,
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+            }
         });
     }
 
-    // Mobile menu
-    initMobileMenu() {
-        const navToggle = document.querySelector('.nav-toggle');
-        const navMenu = document.querySelector('.nav-menu');
-        
-        if (navToggle && navMenu) {
-            navToggle.addEventListener('click', () => {
-                navToggle.classList.toggle('active');
-                navMenu.classList.toggle('active');
+    flipCard(card) {
+        if (card.classList.contains('flipping')) return;
+
+        card.classList.add('flipping');
+        const isFlipped = card.classList.contains('flipped');
+
+        console.log('🔄 Flipping card, estava:', isFlipped ? 'virado' : 'normal');
+
+        // Toggle classe
+        if (isFlipped) {
+            card.classList.remove('flipped');
+        } else {
+            card.classList.add('flipped');
+        }
+
+        // Efeito visual
+        gsap.timeline()
+            .to(card, {
+                scale: 1.05,
+                duration: 0.1,
+                ease: 'power2.out'
+            })
+            .to(card, {
+                scale: 1,
+                duration: 0.1,
+                ease: 'power2.in',
+                onComplete: () => {
+                    card.classList.remove('flipping');
+                }
             });
-            
-            // Close menu when clicking on links
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.addEventListener('click', () => {
-                    navToggle.classList.remove('active');
-                    navMenu.classList.remove('active');
+    }
+
+    // ==========================================================================
+    // PILARES ANIMATION
+    // ==========================================================================
+
+    initPilaresAnimation() {
+        const pilares = document.querySelectorAll('.pilar');
+        if (pilares.length === 0) {
+            console.warn('❌ Pilares não encontrados');
+            return;
+        }
+
+        console.log('✅ Pilares animação inicializada');
+
+        pilares.forEach((pilar) => {
+            pilar.addEventListener('mouseenter', () => {
+                gsap.to(pilar, {
+                    y: -10,
+                    scale: 1.05,
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+
+                gsap.to(pilar.querySelector('.pilar-icon'), {
+                    scale: 1.2,
+                    rotation: 10,
+                    duration: 0.3,
+                    ease: 'power2.out'
                 });
             });
-        }
-    }
 
-    // Main animation loop
-    animate() {
-        this.animationFrameId = requestAnimationFrame(() => this.animate());
-        
-        if (this.particles) {
-            this.particles.rotation.x += 0.0005;
-            this.particles.rotation.y += 0.0008;
-            
-            // Mouse interaction
-            if (window.mouseX !== undefined && window.mouseY !== undefined) {
-                const mouseX = (window.mouseX / window.innerWidth - 0.5) * 2;
-                const mouseY = (window.mouseY / window.innerHeight - 0.5) * 2;
-                
-                this.particles.rotation.x += mouseY * 0.0001;
-                this.particles.rotation.y += mouseX * 0.0001;
-            }
-        }
-        
-        // Animate floating elements
-        if (this.floatingElements) {
-            this.floatingElements.forEach((element, index) => {
-                element.rotation.x += 0.002 + index * 0.0001;
-                element.rotation.y += 0.003 + index * 0.0001;
-                element.position.y += Math.sin(Date.now() * 0.001 + index) * 0.0002;
+            pilar.addEventListener('mouseleave', () => {
+                gsap.to(pilar, {
+                    y: 0,
+                    scale: 1,
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
+
+                gsap.to(pilar.querySelector('.pilar-icon'), {
+                    scale: 1,
+                    rotation: 0,
+                    duration: 0.3,
+                    ease: 'power2.out'
+                });
             });
-        }
-        
-        this.renderers.background.render(this.scenes.background, this.camera);
+        });
     }
 
-    // Event handlers
-    onWindowResize() {
-        this.camera.aspect = window.innerWidth / window.innerHeight;
-        this.camera.updateProjectionMatrix();
-        this.renderers.background.setSize(window.innerWidth, window.innerHeight);
-        
-        // Resize interactive logo
-        if (this.interactiveLogo && this.interactiveLogo.renderer) {
-            const container = document.getElementById('hero-3d-container');
-            if (container) {
-                this.interactiveLogo.camera.aspect = container.clientWidth / container.clientHeight;
-                this.interactiveLogo.camera.updateProjectionMatrix();
-                this.interactiveLogo.renderer.setSize(container.clientWidth, container.clientHeight);
-            }
-        }
-        
-        // Resize individual scene renderers
-        Object.keys(this.renderers).forEach(key => {
-            if (key !== 'background') {
-                const container = document.getElementById(`${key}-3d-container`) || 
-                                document.getElementById(`${key.replace('-', '-3d-')}`);
-                if (container && this.renderers[key]) {
-                    this.renderers[key].setSize(container.clientWidth, container.clientHeight);
+    // ==========================================================================
+    // SCROLL TRIGGER & PROGRESSION
+    // ==========================================================================
+
+    initScrollTrigger() {
+        gsap.registerPlugin(ScrollTrigger);
+    }
+
+    initProgressionAnimation() {
+        const progressionSteps = document.querySelectorAll('.progression-step');
+        if (progressionSteps.length === 0) return;
+
+        console.log('✅ Progression animation inicializada');
+
+        progressionSteps.forEach((step, index) => {
+            gsap.set(step, { opacity: 0, y: 50 });
+
+            ScrollTrigger.create({
+                trigger: step,
+                start: 'top 85%',
+                onEnter: () => {
+                    gsap.to(step, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.6,
+                        delay: index * 0.1,
+                        ease: 'power3.out'
+                    });
+
+                    gsap.from(step.querySelector('.step-icon'), {
+                        scale: 0,
+                        rotation: -90,
+                        duration: 0.5,
+                        delay: index * 0.1 + 0.2,
+                        ease: 'back.out(1.5)'
+                    });
                 }
+            });
+        });
+
+        this.animateTimelinePath();
+    }
+
+    animateTimelinePath() {
+        const timelinePath = document.querySelector('.timeline-path');
+        if (!timelinePath) return;
+
+        gsap.set(timelinePath, { height: 0 });
+
+        ScrollTrigger.create({
+            trigger: '.progression-timeline',
+            start: 'top 80%',
+            end: 'bottom 30%',
+            scrub: 1,
+            onUpdate: (self) => {
+                gsap.to(timelinePath, {
+                    height: `${self.progress * 100}%`,
+                    duration: 0.1,
+                    ease: 'none'
+                });
             }
         });
     }
 
-    onMouseMove(event) {
-        window.mouseX = event.clientX;
-        window.mouseY = event.clientY;
+    // ==========================================================================
+    // ANIMATION LOOP
+    // ==========================================================================
+
+    animate() {
+        if (!this.renderers.background) return;
+
+        this.animationFrameId = requestAnimationFrame(() => this.animate());
+
+        // Animar partículas
+        if (this.particles && this.particles.userData.velocities) {
+            const positions = this.particles.geometry.attributes.position.array;
+            const velocities = this.particles.userData.velocities;
+
+            for (let i = 0; i < positions.length; i += 3) {
+                positions[i] += velocities[i];
+                positions[i + 1] += velocities[i + 1];
+                positions[i + 2] += velocities[i + 2];
+
+                // Reposicionar partículas que saem dos limites
+                if (Math.abs(positions[i]) > 8) velocities[i] *= -1;
+                if (Math.abs(positions[i + 1]) > 8) velocities[i + 1] *= -1;
+                if (Math.abs(positions[i + 2]) > 8) velocities[i + 2] *= -1;
+            }
+
+            this.particles.geometry.attributes.position.needsUpdate = true;
+        }
+
+        try {
+            this.renderers.background.render(this.scenes.background, this.camera);
+        } catch (error) {
+            console.warn('⚠️ Erro no render 3D:', error);
+        }
+    }
+
+    // ==========================================================================
+    // EVENT HANDLERS
+    // ==========================================================================
+
+    onWindowResize() {
+        if (this.camera && this.renderers.background) {
+            this.camera.aspect = window.innerWidth / window.innerHeight;
+            this.camera.updateProjectionMatrix();
+            this.renderers.background.setSize(window.innerWidth, window.innerHeight);
+        }
     }
 
     onScroll() {
-        // Handle scroll-based animations and effects
-        const scrollY = window.pageYOffset;
-        
-        // Parallax effect for floating elements
-        if (this.floatingElements) {
-            this.floatingElements.forEach((element, index) => {
-                element.position.z = Math.sin(scrollY * 0.001 + index) * 2;
-            });
+        const scrollY = window.scrollY;
+
+        if (this.camera) {
+            this.camera.position.y = scrollY * 0.0005;
+        }
+
+        this.updateScrollIndicator();
+    }
+
+    updateScrollIndicator() {
+        const scrollIndicator = document.querySelector('.scroll-indicator');
+        if (!scrollIndicator) return;
+
+        const scrollPercent = window.scrollY / (document.body.scrollHeight - window.innerHeight);
+
+        if (scrollPercent > 0.1) {
+            gsap.to(scrollIndicator, { opacity: 0, duration: 0.3 });
+        } else {
+            gsap.to(scrollIndicator, { opacity: 1, duration: 0.3 });
         }
     }
 
-    hideLoadingScreen() {
-        const loadingScreen = document.getElementById('loading-screen');
-        if (loadingScreen) {
-            setTimeout(() => {
-                loadingScreen.style.opacity = '0';
-                setTimeout(() => {
-                    loadingScreen.style.display = 'none';
-                }, 500);
-            }, 2500);
-        }
-    }
+    // ==========================================================================
+    // CLEANUP
+    // ==========================================================================
 
-    // Cleanup
     destroy() {
         if (this.animationFrameId) {
             cancelAnimationFrame(this.animationFrameId);
         }
-        
-        
+
         Object.values(this.renderers).forEach(renderer => {
-            if (renderer && renderer.dispose) {
-                renderer.dispose();
-            }
+            if (renderer.dispose) renderer.dispose();
         });
-        
-        Object.values(this.scenes).forEach(scene => {
-            if (scene && scene.clear) {
-                scene.clear();
-            }
-        });
+
+        window.removeEventListener('resize', this.onWindowResize);
+        window.removeEventListener('scroll', this.onScroll);
     }
 }
 
-// Extended class methods
-IncodeWebsite.prototype.initCustomCursor = function() {
-    // Create custom cursor element
-    const cursor = document.createElement('div');
-    cursor.classList.add('custom-cursor');
-    document.body.appendChild(cursor);
-    
-    this.customCursor = cursor;
-    
-    // Update cursor position
-    document.addEventListener('mousemove', (e) => {
-        cursor.style.left = e.clientX - 10 + 'px';
-        cursor.style.top = e.clientY - 10 + 'px';
-    });
-    
-    // Cursor interactions
-    const interactiveElements = document.querySelectorAll('button, .nav-link, .differential-card, .timeline-item, .contact-method');
-    
-    interactiveElements.forEach(element => {
-        element.addEventListener('mouseenter', () => {
-            cursor.classList.add('hover');
-        });
-        
-        element.addEventListener('mouseleave', () => {
-            cursor.classList.remove('hover');
-        });
-        
-        element.addEventListener('mousedown', () => {
-            cursor.classList.add('click');
-        });
-        
-        element.addEventListener('mouseup', () => {
-            cursor.classList.remove('click');
-        });
-    });
-};
+// ==========================================================================
+// INITIALIZATION
+// ==========================================================================
 
-IncodeWebsite.prototype.initAdvancedInteractions = function() {
-    // Magnetic effect for cards
-    const cards = document.querySelectorAll('.differential-card, .timeline-content');
-    
-    cards.forEach(card => {
-        card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left - rect.width / 2;
-            const y = e.clientY - rect.top - rect.height / 2;
-            
-            const moveX = x * 0.05;
-            const moveY = y * 0.05;
-            
-            card.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.02)`;
-        });
-        
-        card.addEventListener('mouseleave', () => {
-            card.style.transform = 'translate(0, 0) scale(1)';
-        });
-    });
-    
-    // Advanced button interactions
-    const buttons = document.querySelectorAll('.cta-button');
-    buttons.forEach(button => {
-        button.addEventListener('mousemove', (e) => {
-            const rect = button.getBoundingClientRect();
-            const x = ((e.clientX - rect.left) / rect.width) * 100;
-            const y = ((e.clientY - rect.top) / rect.height) * 100;
-            
-            button.style.setProperty('--mouse-x', x + '%');
-            button.style.setProperty('--mouse-y', y + '%');
-        });
-    });
-    
-    // Add advanced button styles
-    if (!document.getElementById('advanced-styles')) {
-        const style = document.createElement('style');
-        style.id = 'advanced-styles';
-        style.textContent = `
-            .cta-button {
-                --mouse-x: 50%;
-                --mouse-y: 50%;
-                background: radial-gradient(circle at var(--mouse-x) var(--mouse-y), rgba(255,255,255,0.2) 0%, transparent 50%), var(--gradient-primary);
-            }
-        `;
-        document.head.appendChild(style);
-    }
-};
-
-// Initialize the website when DOM is ready
+// Aguardar carregamento
 document.addEventListener('DOMContentLoaded', () => {
-    window.incodeWebsite = new IncodeWebsite();
+    try {
+        const incodeWebsite = new IncodeWebsite();
+        window.incodeWebsite = incodeWebsite;
+        console.log('🎉 Incode Academy Website carregado com sucesso!');
+    } catch (error) {
+        console.error('❌ Erro ao inicializar website:', error);
+    }
 });
 
-// Cleanup on page unload
-window.addEventListener('beforeunload', () => {
-    if (window.incodeWebsite) {
-        window.incodeWebsite.destroy();
+// Smooth scrolling para links
+document.addEventListener('click', (e) => {
+    if (e.target.matches('a[href^="#"]')) {
+        e.preventDefault();
+        const target = document.querySelector(e.target.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
     }
 });
